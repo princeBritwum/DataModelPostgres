@@ -18,20 +18,21 @@ time_table_drop = "DROP TABLE time"
 # CREATE TABLES
 #FACT_TABLE
 
-songplay_table_create = ("CREATE TABLE IF NOT EXISTS songplays (songplay_id int PRIMARY KEY, start_time timestamp, user_id varchar, level varchar,\
-                        song_id int, artist_id int, session_id int, location varchar, user_agent varchar)")
+songplay_table_create = ("CREATE TABLE IF NOT EXISTS songplays (songplay_id int PRIMARY KEY, start_time timestamp, user_id varchar,\
+                         level varchar,song_id int, artist_id int, session_id int, location varchar, user_agent varchar)")
 
 #DIMENSION_TABLES        
-user_table_create = ("CREATE TABLE IF NOT EXISTS users (user_id int PRIMARY KEY , first_name varchar, last_name varchar, gender varchar, level varchar)")
+user_table_create = ("CREATE TABLE IF NOT EXISTS users (user_id int PRIMARY KEY ,first_name varchar,last_name varchar,gender varchar,level int)")
  
 
-song_table_create = ("CREATE TABLE IF NOT EXISTS songs (song_id int PRIMARY KEY, title varchar, artist_id int, year numeric, duration timestamp)")
+song_table_create = ("CREATE TABLE IF NOT EXISTS songs (song_id varchar PRIMARY KEY, title varchar, artist_id varchar, year numeric \
+                        ,duration float)")
     
-artist_table_create = ("CREATE TABLE IF NOT EXISTS artists (artist_id int PRIMARY KEY, name varchar, location varchar, latitude double, longitude \
-                     double)")
+artist_table_create = ("CREATE TABLE IF NOT EXISTS artists (artist_id int PRIMARY KEY, name varchar, location varchar, latitude float, longitude \
+                     float)")
         
-time_table_create = ("CREATE TABLE IF NOT EXISTS time (start_time timestamp PRIMARY KEY, hour timestamp, day varchar, week varchar, month varchar, \
-                    year timestamp, weekday varchar)")
+time_table_create = ("CREATE TABLE IF NOT EXISTS time (start_time timestamp PRIMARY KEY, hour int, day int, week int, month int \
+                     ,year int, weekday int)")
  
         
 # INSERT RECORDS
@@ -39,7 +40,7 @@ time_table_create = ("CREATE TABLE IF NOT EXISTS time (start_time timestamp PRIM
 songplay_table_insert = ("""
                         INSERT INTO songplays (songplay_id, start_time , user_id , level ,\
                         song_id , artist_id , session_id, location, user_agent)
-                        VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)ON CONFLICT (artist_id) DO NOTHING;
+                        VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)ON CONFLICT (songplay_id) DO NOTHING;
                         """)
 
 user_table_insert = (""" 
