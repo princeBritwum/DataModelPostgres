@@ -18,15 +18,16 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 # CREATE TABLES
 #FACT_TABLE
 
+
 songplay_table_create = """
-                            CREATE TABLE IF NOT EXISTS songplays (songplay_id varchar PRIMARY KEY, start_time bigint, user_id varchar, level 
+                            CREATE TABLE IF NOT EXISTS songplays (songplay_id SERIAL PRIMARY KEY, start_time bigint, user_id varchar, level 
                             varchar,song_id int, artist_id int, session_id int, location varchar, user_agent varchar);
                         """
 
 #DIMENSION_TABLES        
 
 user_table_create = """
-                        CREATE TABLE IF NOT EXISTS users (user_id varchar PRIMARY KEY, first_name varchar, last_name varchar, gender varchar, level 
+                        CREATE TABLE IF NOT EXISTS users (user_id varchar PRIMARY KEY, first_name varchar, last_name varchar, gender varchar,level 
                         varchar);
                     """
  
@@ -49,11 +50,18 @@ time_table_create = """
         
 # INSERT RECORDS
 
+#songplay_table_insert = """
+#                        INSERT INTO songplays (songplay_id, start_time , user_id , level ,
+#                        song_id , artist_id , session_id, location, user_agent)
+#                        VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)ON CONFLICT (songplay_id) DO NOTHING;
+#                        """
+
 songplay_table_insert = """
                         INSERT INTO songplays (songplay_id, start_time , user_id , level ,
                         song_id , artist_id , session_id, location, user_agent)
-                        VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)ON CONFLICT (songplay_id) DO NOTHING;
+                        VALUES(DEFAULT,%s,%s,%s,%s,%s,%s,%s,%s)ON CONFLICT (songplay_id) DO NOTHING;
                         """
+
 
 user_table_insert = """ 
                     INSERT INTO users (user_id , first_name , last_name , gender , level) VALUES (%s,%s,%s,%s,%s) 
