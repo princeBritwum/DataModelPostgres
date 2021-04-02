@@ -23,7 +23,7 @@ def process_song_file(cur, filepath):
 
 def process_log_file(cur, filepath):
     # open log file
-    df = pd.read_json('data/log_data') 
+    df = pd.read_json(filepath, lines = True) 
 
     # filter by NextSong action
     df = df[df['page']=='NextSong']
@@ -61,7 +61,7 @@ def process_log_file(cur, filepath):
         
         # get songid and artistid from song and artist tables
         cur.execute(song_select, (row.song, row.artist, row.length))
-        results = cur.fetchone()
+        results = cur.fetchall()
         
         if results:
             songid, artistid = results

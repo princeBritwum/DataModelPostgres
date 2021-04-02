@@ -40,11 +40,11 @@ song_table_create = """
 artist_table_create = """
                         CREATE TABLE IF NOT EXISTS artists (artist_id varchar PRIMARY KEY, artist_name varchar, artist_location varchar,
                        artist_latitude float, artist_longitude float);
-                    """
+                      """
         
 time_table_create = """
-                        CREATE TABLE IF NOT EXISTS time (start_time bigint PRIMARY KEY, hour int, day int, week int, month int
-                     ,year int, weekday int);
+                        CREATE TABLE IF NOT EXISTS time (start_time timestamp PRIMARY KEY, hour int, day int, week int, month int ,year int, 
+                        weekday int); 
                     """
  
         
