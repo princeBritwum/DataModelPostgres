@@ -10,12 +10,15 @@ def process_song_file(cur, filepath):
     df = pd.read_json(filepath, lines = True) 
 
     # insert song record
-    song_data =  ('song_id' , 'title' , 'artist_id', 'year', 'duration')
+    song_data = df[['song_id', 'title', 'artist_id', 'year', 'duration']].values[0].tolist()
     cur.execute(song_table_insert, song_data)
     
     # insert artist record
-    artist_data = ('artist_id' , 'name' , 'location', 'latitude' , 'longitude')
+    artist_data = df[['artist_id' , 'artist_name' , 'artist_location', 'artist_latitude', 'artist_longitude']].values[0].tolist()
     cur.execute(artist_table_insert, artist_data)
+    
+    df = pd.DataFrame(artist_data)
+    print (df.dtypes)
 
 
 def process_log_file(cur, filepath):
@@ -27,25 +30,31 @@ def process_log_file(cur, filepath):
 
 
     # convert timestamp column to datetime
-    t = df['12-01-2019'] = pd.to_datetime(df['dt']).dt.date 
+    #t = df['12-01-2019'] = pd.to_datetime(df['dt']).dt.date
+    t = pd.to_datetime(df['ts'],  unit='ms')
     
     # insert time data records
-    time_data =  ('start_time', 'hour', 'day', 'week', 'month', 'year' ,'weekday')
-    column_labels = ('ts', 'hour', 'day', 'week_of_year', 'month', 'year', 'weekday') 
-    time_df = pd.DataFrame(time_data.values.tolist(), columns=column_labels)
+    time_data = list((t,t.dt.hour,t.dt.day,t.dt.week,t.dt.month,t.dt.year,t.dt.weekday))
+    column_labels = ('start_time', 'hour', 'day', 'week', 'month', 'year' ,'weekday')
+    time_df = pd.DataFrame.from_dict(dict(zip(column_labels,time_data))) #<<This worked
     
-
     for i, row in time_df.iterrows():
-        cur.execute(time_table_insert, list(row))
+        cur.execute(time_table_insert, row)
+    #cur.execute(time_table_insert, time_data)
 
     # load user table
-    user_data =  ('user_id' , 'first_name' , 'last_name' , 'gender' , 'level')
-    column_labels = ('user_id' , 'first_name' , 'last_name' , 'gender' , 'level')
-    user_df = pd.DataFrame(user_data.values.tolist(), columns=column_labels)
-
+    #user_data = df[['user_id' , 'first_name' , 'last_name' , 'gender' , 'level']].values[0].tolist()
+    user_df = df[["userId", "firstName", "lastName", "gender", "level"]].drop_duplicates(subset=['userId'])
+    #user_df = pd.DataFrame(user_data.values.tolist(), columns=column_labels)
+    
     # insert user records
     for i, row in user_df.iterrows():
-        cur.execute(user_table_insert, row)
+        try:
+            cur.execute(user_table_insert, row)
+        except Exception as e:
+            print('Skipping record : already exists in users table')
+    #for i, row in user_df.iterrows():
+    #    cur.execute(user_table_insert, row)
 
     # insert songplay records
     for index, row in df.iterrows():
