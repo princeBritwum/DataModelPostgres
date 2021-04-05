@@ -7,6 +7,9 @@ from sql_queries import *
 
 def process_song_file(cur, filepath):
     # open song file
+    """
+    Drops each table using the queries in `drop_table_queries` list.
+    """
     df = pd.read_json(filepath, lines = True) 
 
     # insert song record
@@ -61,7 +64,7 @@ def process_log_file(cur, filepath):
         
         # get songid and artistid from song and artist tables
         cur.execute(song_select, (row.song, row.artist, row.length))
-        results = cur.fetchall()
+        results = cur.fetchone()
         
         if results:
             songid, artistid = results
@@ -76,11 +79,25 @@ def process_log_file(cur, filepath):
 
 def process_data(cur, conn, filepath, func):
     # get all files matching extension from directory
+    """
+    Description: This function is responsible for listing the files in a directory,
+    and then executing the ingest process for each file according to the function
+    that performs the transformation to save it to the database.
+
+    Arguments:
+        cur: the cursor object.
+        conn: connection to the database.
+        filepath: log data or song data file path.
+        func: function that transforms the data and inserts it into the database.
+
+    Returns:
+        None
+    """
     all_files = []
-    for root, dirs, files in os.walk(filepath):
-        files = glob.glob(os.path.join(root,'*.json'))
+    for root, dirs, files in os.walk(filepath):#Generates the filename
+        files = glob.glob(os.path.join(root,'*.json')) #retrieves the files/pathnames #joins the abslute path
         for f in files :
-            all_files.append(os.path.abspath(f))
+            all_files.append(os.path.abspath(f)) #appends all_files to abspath
 
     # get total number of files found
     num_files = len(all_files)
